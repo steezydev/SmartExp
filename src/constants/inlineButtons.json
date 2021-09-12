@@ -1,0 +1,58 @@
+{
+  "main": {
+    "raffles": {
+      "title": "Раффлы 🎟️",
+      "callback": "raffles"
+    },
+    "announces": {
+      "title": "Объявления 📢",
+      "callback": "announces"
+    },
+    "profile": {
+      "title": "Профиль 👤",
+      "callback": "profile"
+    }
+  },
+  "raffles": {
+    "my": {
+      "title": "Мои раффлы 💼",
+      "callback": "my"
+    },
+    "active": {
+      "title": "Активные ⏱",
+      "callback": "active"
+    },
+    "history": {
+      "title": "История 🗂",
+      "callback": "history"
+    }
+  },
+  "myRaffles": {
+    "active": {
+      "title": "Текущие раффлы 🗓",
+      "callback": "current"
+    },
+    "participated": {
+      "title": "Участвовал 📍",
+      "callback": "participated"
+    },
+    "won": {
+      "title": "Выиграл 🏆",
+      "callback": "won"
+    }
+  },
+  "profile": {
+    "statistics": {
+      "title": "Статистика 📈",
+      "callback": "statistics"
+    },
+    "refs": {
+      "title": "Рефералы 🔗",
+      "callback": "referrals"
+    },
+    "balance": {
+      "title": "Баланс 💰",
+      "callback": "balance"
+    }
+  }
+}
