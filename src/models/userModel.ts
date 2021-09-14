@@ -1,18 +1,10 @@
-import { UserService } from '../services/userService'
+import * as mongoose from "mongodb";
+import { getDb, makeDb } from "../utils/db";
 
-const userService = new UserService()
 
-export class UserModel {
-
-  /** 
-   * Checks for user in DB
-   * 
-   * @returns True or false
-   * */
-   async creatUser(telegramId: number) {
-     console.log(telegramId)
-    //const user = await userService.getUser(telegramId)
-
-    //return user
+class User {
+  async getUser() {
+    const db = getDb();
+    const users = db.collection('users')
   }
 }
