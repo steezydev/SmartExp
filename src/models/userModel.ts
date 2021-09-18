@@ -1,10 +1,19 @@
-import * as mongoose from "mongodb";
-import { getDb, makeDb } from "../utils/db";
+import { Schema, model, Document } from 'mongoose'
 
-
-class User {
-  async getUser() {
-    const db = getDb();
-    const users = db.collection('users')
-  }
+interface IUser extends Document {
+  name: string;
+  telegramId: number;
+  currency?: string;
+  expCategories?: [string];
+  incCategories?: [string];
 }
+
+const schema = new Schema<IUser>({
+  name: { type: String, required: true },
+  telegramId: { type: Number, required: true },
+  currency: String,
+  expCategories: Array,
+  incCategories: Array
+});
+
+export default model<IUser>('users', schema);

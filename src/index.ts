@@ -1,16 +1,16 @@
 import * as dotenv from 'dotenv';
+import { connectDB } from './utils/db'
 
 dotenv.config();
 process.setMaxListeners(0);
 
-
 import { MongoClient } from 'mongodb';
 import { setup } from './bot';
-import { makeDb } from './utils/db'
 
 const initialize = async () => {
-  //const db = (await MongoClient.connect(process.env.MONGODB_URI!, { useNewUrlParser: true, useUnifiedTopology: true })).db();
-  const db = await makeDb()
+  await connectDB()
+
+  const db = (await MongoClient.connect(process.env.MONGODB_URI!, { useNewUrlParser: true, useUnifiedTopology: true })).db();
 
   const bot = setup(db);
 
