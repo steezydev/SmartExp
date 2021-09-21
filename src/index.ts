@@ -11,7 +11,6 @@ const initialize = async () => {
   await connectDB()
 
   const db = (await MongoClient.connect(process.env.MONGODB_URI!, { useNewUrlParser: true, useUnifiedTopology: true })).db();
-
   const bot = setup(db);
 
   await bot.launch()

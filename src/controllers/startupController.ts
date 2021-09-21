@@ -1,8 +1,9 @@
 //On startup bot greets the users, adds him to the databse (if doesn't exist) and shows an inline keyboard
 import { template } from "../utils/templater";
 import UserModel from "../models/userModel"
+import { mainKeyboard } from '../constants/keyboards'
 
-export const startup = async (ctx: any) => {
+export default async (ctx: any) => {
   const user = await UserModel.findOne({ telegramId: ctx.from.id }).exec()
 
   if (!user) {
@@ -15,6 +16,8 @@ export const startup = async (ctx: any) => {
     })
   }
 
-
-  return ctx.reply(template('startup', 'greeting', {}))
+  return ctx.reply(template('startup', 'greeting', {}),
+    mainKeyboard
+      .resize()
+  )
 }
