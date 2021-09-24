@@ -10,7 +10,7 @@ export default async (ctx: any) => {
     UserModel.create({
       name: ctx.from!.first_name,
       telegramId: ctx.from.id,
-      currency: 'RU'
+      currency: 'RUB'
     }, function (err) {
       if (err) throw new Error();
     })

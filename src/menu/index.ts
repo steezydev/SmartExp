@@ -1,6 +1,6 @@
 import { MenuMiddleware } from 'telegraf-inline-menu'
-import { menuTemplate } from './newCategoryTemplate'
+import { historyTemplate } from './hisotryTemplate'
 
-export const categoryMenu = new MenuMiddleware('/', menuTemplate)
 
+export const hisotryMenu = new MenuMiddleware('hisotry/', historyTemplate)
 

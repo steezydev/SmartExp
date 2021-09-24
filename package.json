@@ -12,6 +12,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/emoji-strip": "^1.0.0",
     "@types/mongodb": "^3.6.18",
     "@types/node": "^15.6.2",
     "ts-node": "^10.2.1",
@@ -21,6 +22,7 @@
     "any-date-parser": "^1.5.1",
     "axios": "^0.21.4",
     "dotenv": "^10.0.0",
+    "emoji-strip": "^1.0.1",
     "mongodb": "^3.7.0",
     "mongoose": "^6.0.6",
     "pupa": "^2.1.1",

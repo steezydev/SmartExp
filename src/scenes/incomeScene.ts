@@ -7,13 +7,12 @@ import { fancyCount2, isEmojisOnly } from "../utils/checkEmoji";
 import currency from '../constants/currency'
 
 import CategoryModel from "../models/categoryModel"
-import ExpenseModel from "../models/expenseModel"
+import IncomeModel from "../models/incomeModel"
 import UserModel from "../models/userModel"
 
 const parser = require('any-date-parser');
 
-interface expenseData {
-  telegramId: number
+interface incomeData {
   sum: number;
   currency: string;
   category: string;
@@ -21,15 +20,8 @@ interface expenseData {
   description: string;
 }
 
-
-//TODO: Move to helper
-function isNumeric(a: string) {
-  if (typeof a != "string") return false // we only process strings!  
-  return !isNaN(parseFloat(a)) // ...and ensure strings of whitespace fail
-}
-
-const saveExpense = async (ctx: any) => {
-  const data = ctx.session.expenseData
+const saveIncome = async (ctx: any) => {
+  const data = ctx.session.incomeData
   const user = await UserModel.findOne({telegramId: data.telegramId}).exec()
 
   if (user == null) {
@@ -40,61 +32,65 @@ const saveExpense = async (ctx: any) => {
     throw new Error
   }
 
-  data.currency = currency[user.currency].name
-  
-  ExpenseModel.create(data, function (err: any) {
+  IncomeModel.create(data, function (err: any) {
     if (err) throw new Error();
   })
 
   const date = new Date(data.date);
-  await ctx.replyWithMarkdown(template("expense", "wizardEnd", {
-    sum: ctx.session.expenseData.sum,
+
+  await ctx.replyWithMarkdown(template("income", "wizardEnd", {
+    sum: ctx.session.incomeData.sum,
     currency: currency[user.currency].sign,
-    category: ctx.session.expenseData.category,
+    category: ctx.session.incomeData.category,
     date: date.getDate() + '.' + (("0" + (date.getMonth() + 1)).slice(-2)) + '.' + date.getFullYear(),
-    description: ctx.session.expenseData.description
+    description: ctx.session.incomeData.description
   }),
     mainKeyboard
       .resize()
   );
 }
 
-//* Getting sum wizard step
+function isNumeric(a: string) {
+  if (typeof a != "string") return false // we only process strings!  
+  return !isNaN(parseFloat(a)) // ...and ensure strings of whitespace fail
+}
+
+// Getting sum wizard step
 const getSumStep = new Composer<SessionContext>();
 getSumStep.on("text", async (ctx) => {
 
   const sum = ctx.message.text;
 
   if (!isNumeric(sum)) {
-    ctx.reply(template("expense", "sum_error", {}));
-    await ctx.reply(template("expense", "sum", {}));
+    ctx.reply(template("income", "sum_error", {}));
+    await ctx.reply(template("income", "sum", {}));
     return;
   }
 
-  ctx.session.expenseData.sum = parseFloat(sum.replace(',', '.')).toFixed(2);
+  ctx.session.incomeData.sum = parseFloat(sum.replace(',', '.')).toFixed(2);
 
   //Getting category keyboard
-  const categoryKeyboard = await createKeyboard(ctx.from.id, 'EXPENSE')
+  const categoryKeyboard = await createKeyboard(ctx.from.id, 'INCOME')
   if (categoryKeyboard != null) {
-    await ctx.reply(template("expense", "category", {}), categoryKeyboard.resize());
+    await ctx.reply(template("income", "category", {}), categoryKeyboard.resize());
   } else {
-    await ctx.reply(template("expense", "no_category", {}));
-    await ctx.reply(template("expense", "category", {}));
+    await ctx.reply(template("income", "no_category", {}));
+    await ctx.reply(template("income", "category", {}));
   }
   return ctx.wizard.next();
 });
 getSumStep.use((ctx) =>
-  ctx.reply(template("expense", "sum", {}))
+  ctx.reply(template("income", "sum", {}))
 );
 
-//* Getting category wizard step
+// Getting category wizard step
 const getCategoryStep = new Composer<SessionContext>();
 getCategoryStep.on("text", async (ctx) => {
   const category = ctx.message.text;
 
   if (!isEmojisOnly(category) || fancyCount2(category) > 3) {
-    ctx.reply(template("expense", "category_error", {}));
-    await ctx.reply(template("expense", "category", {}));
+    ctx.reply(template("income", "category_error", {}));
+    await ctx.reply(template("income", "category", {}));
     return;
   }
 
@@ -113,12 +109,11 @@ getCategoryStep.on("text", async (ctx) => {
   }
 
 
-  ctx.session.expenseData.category = category
-  await ctx.reply(template("expense", "date", {}), dateKeyboard.resize());
+  ctx.session.incomeData.category = category
+  await ctx.reply(template("income", "date", {}), dateKeyboard.resize());
   return ctx.wizard.selectStep(4);
 });
 
-//! This step is only triggered if user wants to add a new category
 const newCategoryStep = new Composer<SessionContext>();
 newCategoryStep.action('confirmCategory', async (ctx) => {
   const category = ctx.session.newCategory
@@ -126,15 +121,15 @@ newCategoryStep.action('confirmCategory', async (ctx) => {
 
   CategoryModel.create({
     emoji: category,
-    type: 'EXPENSE',
+    type: 'INCOME',
     userTelegramId: userId
   }, function (err) {
     if (err) throw new Error();
   })
-  await ctx.reply(template("expense", "category_add", { category: category }));
+  await ctx.reply(template("income", "category_add", { category: category }));
 
-  ctx.session.expenseData.category = category
-  await ctx.reply(template("expense", "date", {}), dateKeyboard.resize());
+  ctx.session.incomeData.category = category
+  await ctx.reply(template("income", "date", {}), dateKeyboard.resize());
   return ctx.wizard.next()
 })
 
@@ -142,21 +137,20 @@ newCategoryStep.action('rejectCategory', async (ctx) => {
   const category = ctx.session.newCategory
   const userId = ctx.session.userId
 
-  await ctx.reply(template("expense", "category_notAdd", { category: category }));
+  await ctx.reply(template("income", "category_notAdd", { category: category }));
 
-  const categoryKeyboard = await createKeyboard(userId, 'EXPENSE')
+  const categoryKeyboard = await createKeyboard(userId, 'INCOME')
   if (categoryKeyboard != null) {
-    await ctx.reply(template("expense", "category", {}), categoryKeyboard.resize());
+    await ctx.reply(template("income", "category", {}), categoryKeyboard.resize());
   } else {
-    await ctx.reply(template("expense", "no_category", {}));
-    await ctx.reply(template("expense", "category", {}));
+    await ctx.reply(template("income", "no_category", {}));
+    await ctx.reply(template("income", "category", {}));
   }
 
   return ctx.wizard.back()
 })
 
-//* Getting date wizard step
-
+// Getting date wizard step
 const getDateStep = new Composer<SessionContext>();
 getDateStep.on("text", async (ctx) => {
   const date = ctx.message.text;
@@ -168,29 +162,28 @@ getDateStep.on("text", async (ctx) => {
 
   // Validating date
   if (parsedDate.invalid != undefined) {
-    ctx.reply(template("expense", "date_error", {}));
-    await ctx.reply(template("expense", "date", {}));
+    ctx.reply(template("income", "date_error", {}));
+    await ctx.reply(template("income", "date", {}));
     return;
   }
 
-  ctx.session.expenseData.date = parsedDate
-  await ctx.reply(template("expense", "description", {}), descriptionKeyboard.resize());
+  ctx.session.incomeData.date = parsedDate
+  await ctx.reply(template("income", "description", {}), descriptionKeyboard.resize());
   return ctx.wizard.next();
 });
 getDateStep.use((ctx) =>
-  ctx.replyWithMarkdown(template("expense", "date", {}))
+  ctx.replyWithMarkdown(template("income", "date", {}))
 );
 
-//* Getting description wizard step
-
+// Getting description wizard step
 const getDescriptionStep = new Composer<SessionContext>();
 getDescriptionStep.on("text", async (ctx) => {
 
   let description = ctx.message.text;
 
   if (description.length > 100) {
-    ctx.reply(template("expense", "description_error", {}));
-    await ctx.reply(template("expense", "description", {}), descriptionKeyboard.resize());
+    ctx.reply(template("income", "description_error", {}));
+    await ctx.reply(template("income", "description", {}), descriptionKeyboard.resize());
     return;
   }
 
@@ -198,26 +191,27 @@ getDescriptionStep.on("text", async (ctx) => {
     description = '-'
   }
 
-  ctx.session.expenseData.description = description
+  ctx.session.incomeData.description = description
 
   // Saving data to the database
-  await saveExpense(ctx)
+  await saveIncome(ctx)
+
   return await ctx.scene.leave();
 });
 getDescriptionStep.use((ctx) =>
-  ctx.replyWithMarkdown(template("expense", "description", {}))
+  ctx.replyWithMarkdown(template("income", "description", {}))
 );
 
 
-export const expenseWizard = new Scenes.WizardScene(
-  "expense-wizard",
+export const incomeWizard = new Scenes.WizardScene(
+  "income-wizard",
   async (ctx) => {
-    ctx.session.expenseData = {};
-    ctx.session.expenseData.telegramId = ctx.from!.id
+    ctx.session.incomeData = {};
+    ctx.session.incomeData.telegramId = ctx.from!.id
 
-    const text = template("expense", "wizardStart", {});
+    const text = template("income", "wizardStart", {});
     await ctx.replyWithMarkdown(text, Markup.removeKeyboard());
-    await ctx.reply(template("expense", "sum", {}));
+    await ctx.reply(template("income", "sum", {}));
     return ctx.wizard.next();
   },
   getSumStep,
