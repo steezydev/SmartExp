@@ -14,9 +14,6 @@ const historyTemplate = new MenuTemplate<SessionContext>(async ctx => {
   return { text, parse_mode: 'Markdown' }
 })
 
-// * RAFFLES BUTTONS *
-
-
 // Active Raffles button
 historyTemplate.submenu(hisotryButtons.categories.title, hisotryButtons.categories.callback, historyCategoriesTemplate)
 
