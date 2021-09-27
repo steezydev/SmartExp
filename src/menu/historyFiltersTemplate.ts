@@ -6,7 +6,7 @@ const filters = {
   incomes: 'Доходы'
 }
 
-async function getFilters(context: SessionContext) {
+export async function getFilters(context: SessionContext) {
   const entries: Record<string, string> = {}
   const selects: Record<string, boolean> = {}
 

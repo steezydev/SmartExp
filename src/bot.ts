@@ -20,7 +20,7 @@ import statisticsController from "./controllers/statisticsController"
 // Keyboard
 import keyboardButtons from './constants/keyboardButtons.json'
 
-import { hisotryMenu } from './menu'
+import { historyMenu, resultMenu } from './menu'
 
 const token = process.env.BOT_TOKEN
 if (token === undefined) {
@@ -35,7 +35,8 @@ export const setup = (db: Db) => {
   bot.use(session(db))
   bot.use(stage.middleware())
 
-  bot.use(hisotryMenu)
+  bot.use(historyMenu)
+  bot.use(resultMenu)
 
   //On startup bot greets the users, adds him to the databse (if doesn't exist) and shows an inline keyboard
   bot.start(startupController)

@@ -1,7 +1,7 @@
 import { template } from "../utils/templater";
 import { mainKeyboard } from '../constants/keyboards'
-import { hisotryMenu } from '../menu'
+import { historyMenu } from '../menu'
 
 export default async (ctx: any) => {
-  hisotryMenu.replyToContext(ctx)
+  historyMenu.replyToContext(ctx)
 }

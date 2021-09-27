@@ -2,9 +2,11 @@ import { MenuTemplate, createBackMainMenuButtons } from 'telegraf-inline-menu'
 import { SessionContext } from '../context/context'
 import CategoryModel from "../models/categoryModel"
 
-async function getAllEntries(context: SessionContext) {
+export async function getAllCategories(context: SessionContext) {
   // Getting active raffles list
-  const categories = await CategoryModel.find({telegramId: context.from?.id!}).exec()
+  const categories = await CategoryModel.find({ userTelegramId: context.from?.id! }).exec()
+
+  console.log(categories)
 
   const entries: Record<string, string> = {}
   const selects: Record<string, boolean> = {}
@@ -16,8 +18,11 @@ async function getAllEntries(context: SessionContext) {
     selects['id' + category.id] = true
   }
 
+
   if (context.session.categoriesSelected == undefined) {
-    context.session.categoriesSelected = selects
+    if (Object.keys(categories).length != 0) {
+      context.session.categoriesSelected = selects
+    }
   }
 
   return entries
@@ -50,28 +55,28 @@ const historyCategoriesTemplate = new MenuTemplate<SessionContext>(async context
 })
 
 historyCategoriesTemplate.interact('Все', 'hist_categories_all', {
-	do: async ctx => {
-		await setAllCategories(ctx)
-		return '.'
-	}
+  do: async ctx => {
+    await setAllCategories(ctx)
+    return '.'
+  }
 })
 
 historyCategoriesTemplate.interact('Ни одной', 'hist_categories_none', {
   joinLastRow: true,
-	do: async ctx => {
-		await setNoneCategories(ctx)
-		return '.'
-	}
+  do: async ctx => {
+    await setNoneCategories(ctx)
+    return '.'
+  }
 })
 
-historyCategoriesTemplate.select('unique', getAllEntries, {
+historyCategoriesTemplate.select('unique', getAllCategories, {
   columns: 5,
-	showFalseEmoji: true,
-	isSet: (ctx, key) => Boolean(ctx.session.categoriesSelected[key]),
-	set: (ctx, key, newState) => {
-		ctx.session.categoriesSelected[key] = newState
-		return true
-	}
+  showFalseEmoji: true,
+  isSet: (ctx, key) => Boolean(ctx.session.categoriesSelected[key]),
+  set: (ctx, key, newState) => {
+    ctx.session.categoriesSelected[key] = newState
+    return true
+  }
 })
 
 historyCategoriesTemplate.manualRow(createBackMainMenuButtons('🔙 Назад', ''))

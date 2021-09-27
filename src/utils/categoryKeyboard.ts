@@ -17,6 +17,8 @@ export async function getCategoriesList(selected: any) {
 export async function createKeyboard(telegramId: number, type: string) {
   const categories = await CategoryModel.find({ userTelegramId: telegramId, type: type }).exec()
 
+  console.log(categories)
+
   if (categories.length <= 0) {
     return null
   }

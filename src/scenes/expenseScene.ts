@@ -6,6 +6,8 @@ import { createKeyboard } from '../utils/categoryKeyboard'
 import { fancyCount2, isEmojisOnly } from "../utils/checkEmoji";
 import currency from '../constants/currency'
 
+import { startOfToday } from 'date-fns'
+
 import CategoryModel from "../models/categoryModel"
 import ExpenseModel from "../models/expenseModel"
 import UserModel from "../models/userModel"
@@ -112,7 +114,7 @@ getCategoryStep.on("text", async (ctx) => {
 const newCategoryStep = new Composer<SessionContext>();
 newCategoryStep.action('confirmCategory', async (ctx) => {
   const category = ctx.session.newCategory
-  const userId = ctx.session.userId
+  const userId = ctx.session.expenseData.telegramId
 
   CategoryModel.create({
     emoji: category,
@@ -130,7 +132,7 @@ newCategoryStep.action('confirmCategory', async (ctx) => {
 
 newCategoryStep.action('rejectCategory', async (ctx) => {
   const category = ctx.session.newCategory
-  const userId = ctx.session.userId
+  const userId = ctx.session.expenseData.telegramId
 
   await ctx.reply(template("expense", "category_notAdd", { category: category }));
 
@@ -153,7 +155,7 @@ getDateStep.on("text", async (ctx) => {
 
   let parsedDate = parser.fromString(date);
   if (date == 'Сегодня' || date == 'Today') {
-    parsedDate = parser.fromString('today');
+    parsedDate = new Date(startOfToday().toISOString());
   }
 
   // Validating date
