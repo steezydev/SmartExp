@@ -2,12 +2,6 @@ import { MenuTemplate, createBackMainMenuButtons } from 'telegraf-inline-menu'
 import { SessionContext } from '../context/context'
 import CategoryModel from "../models/categoryModel"
 
-/*
-const wonChoices: Record<string, string> = {
-  won: '🏆 Выиграл',
-  lost: '👎 Не выиграл',
-}*/
-
 async function getAllEntries(context: SessionContext) {
   // Getting active raffles list
   const categories = await CategoryModel.find({telegramId: context.from?.id!}).exec()
@@ -46,13 +40,13 @@ async function setNoneCategories(ctx: SessionContext) {
 }
 
 async function menuBody(context: SessionContext): Promise<string> {
-  const text = 'Вы можете выбрать категории, которые будут отображаться в вашей истории'
+  const text = '📕 Вы можете выбрать категории, которые будут отображаться в вашей истории'
 
   return text
 }
 
 const historyCategoriesTemplate = new MenuTemplate<SessionContext>(async context => {
-  return { text: await menuBody(context), parse_mode: 'Markdown' }
+  return { text: await menuBody(context), parse_mode: 'HTML' }
 })
 
 historyCategoriesTemplate.interact('Все', 'hist_categories_all', {
@@ -75,7 +69,6 @@ historyCategoriesTemplate.select('unique', getAllEntries, {
 	showFalseEmoji: true,
 	isSet: (ctx, key) => Boolean(ctx.session.categoriesSelected[key]),
 	set: (ctx, key, newState) => {
-    console.log(newState)
 		ctx.session.categoriesSelected[key] = newState
 		return true
 	}

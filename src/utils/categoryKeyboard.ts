@@ -1,6 +1,19 @@
 import CategoryModel from "../models/categoryModel"
 import { Markup } from 'telegraf'
 
+export async function getCategoriesList(selected: any) {
+  let categoriesIds = []
+
+  for (const [key, value] of Object.entries(selected)) {
+    if (value) categoriesIds.push(key.substring(2))
+  }
+  const categoriesObjects = await CategoryModel.find({_id: { $in: categoriesIds }}).select('emoji -_id').exec()
+
+  const categories = categoriesObjects.map(cate => cate.emoji)
+
+  return categories
+}
+
 export async function createKeyboard(telegramId: number, type: string) {
   const categories = await CategoryModel.find({ userTelegramId: telegramId, type: type }).exec()
 

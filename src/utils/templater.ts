@@ -10,7 +10,7 @@ const t: Record<string, Record<string, string>> = templates
  * @param data {object} Template data
  * @returns Templated text
  */
-export function template(section: string, message: string, data: object): string {
+export function template(section: string, message: string, data: object = {}): string {
   if (!data) return t[section][message]
   //return '123'
   return pupa(t[section][message], data);

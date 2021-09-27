@@ -7,20 +7,12 @@ import { fancyCount2, isEmojisOnly } from "../utils/checkEmoji";
 import currency from '../constants/currency'
 
 import CategoryModel from "../models/categoryModel"
-import IncomeModel from "../models/incomeModel"
+import ExpenseModel from "../models/expenseModel"
 import UserModel from "../models/userModel"
 
 const parser = require('any-date-parser');
 
-interface incomeData {
-  sum: number;
-  currency: string;
-  category: string;
-  date: string;
-  description: string;
-}
-
-const saveIncome = async (ctx: any) => {
+const saveIncome = async (ctx: SessionContext) => {
   const data = ctx.session.incomeData
   const user = await UserModel.findOne({telegramId: data.telegramId}).exec()
 
@@ -31,19 +23,21 @@ const saveIncome = async (ctx: any) => {
   if (currency[user.currency] == undefined) {
     throw new Error
   }
+  
+  data.currency = currency[user.currency].name
 
-  IncomeModel.create(data, function (err: any) {
+  ExpenseModel.create(data, function (err: any) {
     if (err) throw new Error();
   })
 
   const date = new Date(data.date);
 
-  await ctx.replyWithMarkdown(template("income", "wizardEnd", {
+  await ctx.replyWithHTML(template("income", "wizardEnd", {
     sum: ctx.session.incomeData.sum,
     currency: currency[user.currency].sign,
     category: ctx.session.incomeData.category,
     date: date.getDate() + '.' + (("0" + (date.getMonth() + 1)).slice(-2)) + '.' + date.getFullYear(),
-    description: ctx.session.incomeData.description
+    description: ctx.session.incomeData.description,
   }),
     mainKeyboard
       .resize()
@@ -62,8 +56,8 @@ getSumStep.on("text", async (ctx) => {
   const sum = ctx.message.text;
 
   if (!isNumeric(sum)) {
-    ctx.reply(template("income", "sum_error", {}));
-    await ctx.reply(template("income", "sum", {}));
+    ctx.reply(template("income", "sum_error"));
+    await ctx.reply(template("income", "sum"));
     return;
   }
 
@@ -72,15 +66,15 @@ getSumStep.on("text", async (ctx) => {
   //Getting category keyboard
   const categoryKeyboard = await createKeyboard(ctx.from.id, 'INCOME')
   if (categoryKeyboard != null) {
-    await ctx.reply(template("income", "category", {}), categoryKeyboard.resize());
+    await ctx.reply(template("income", "category"), categoryKeyboard.resize());
   } else {
-    await ctx.reply(template("income", "no_category", {}));
-    await ctx.reply(template("income", "category", {}));
+    await ctx.reply(template("income", "no_category"));
+    await ctx.reply(template("income", "category"));
   }
   return ctx.wizard.next();
 });
 getSumStep.use((ctx) =>
-  ctx.reply(template("income", "sum", {}))
+  ctx.reply(template("income", "sum"))
 );
 
 // Getting category wizard step
@@ -89,8 +83,8 @@ getCategoryStep.on("text", async (ctx) => {
   const category = ctx.message.text;
 
   if (!isEmojisOnly(category) || fancyCount2(category) > 3) {
-    ctx.reply(template("income", "category_error", {}));
-    await ctx.reply(template("income", "category", {}));
+    ctx.reply(template("income", "category_error"));
+    await ctx.reply(template("income", "category"));
     return;
   }
 
@@ -110,7 +104,7 @@ getCategoryStep.on("text", async (ctx) => {
 
 
   ctx.session.incomeData.category = category
-  await ctx.reply(template("income", "date", {}), dateKeyboard.resize());
+  await ctx.reply(template("income", "date"), dateKeyboard.resize());
   return ctx.wizard.selectStep(4);
 });
 
@@ -129,7 +123,7 @@ newCategoryStep.action('confirmCategory', async (ctx) => {
   await ctx.reply(template("income", "category_add", { category: category }));
 
   ctx.session.incomeData.category = category
-  await ctx.reply(template("income", "date", {}), dateKeyboard.resize());
+  await ctx.reply(template("income", "date"), dateKeyboard.resize());
   return ctx.wizard.next()
 })
 
@@ -141,10 +135,10 @@ newCategoryStep.action('rejectCategory', async (ctx) => {
 
   const categoryKeyboard = await createKeyboard(userId, 'INCOME')
   if (categoryKeyboard != null) {
-    await ctx.reply(template("income", "category", {}), categoryKeyboard.resize());
+    await ctx.reply(template("income", "category"), categoryKeyboard.resize());
   } else {
-    await ctx.reply(template("income", "no_category", {}));
-    await ctx.reply(template("income", "category", {}));
+    await ctx.reply(template("income", "no_category"));
+    await ctx.reply(template("income", "category"));
   }
 
   return ctx.wizard.back()
@@ -162,17 +156,17 @@ getDateStep.on("text", async (ctx) => {
 
   // Validating date
   if (parsedDate.invalid != undefined) {
-    ctx.reply(template("income", "date_error", {}));
-    await ctx.reply(template("income", "date", {}));
+    ctx.reply(template("income", "date_error"));
+    await ctx.reply(template("income", "date"));
     return;
   }
 
   ctx.session.incomeData.date = parsedDate
-  await ctx.reply(template("income", "description", {}), descriptionKeyboard.resize());
+  await ctx.reply(template("income", "description"), descriptionKeyboard.resize());
   return ctx.wizard.next();
 });
 getDateStep.use((ctx) =>
-  ctx.replyWithMarkdown(template("income", "date", {}))
+  ctx.replyWithHTML(template("income", "date"))
 );
 
 // Getting description wizard step
@@ -182,8 +176,8 @@ getDescriptionStep.on("text", async (ctx) => {
   let description = ctx.message.text;
 
   if (description.length > 100) {
-    ctx.reply(template("income", "description_error", {}));
-    await ctx.reply(template("income", "description", {}), descriptionKeyboard.resize());
+    ctx.reply(template("income", "description_error"));
+    await ctx.reply(template("income", "description"), descriptionKeyboard.resize());
     return;
   }
 
@@ -199,7 +193,7 @@ getDescriptionStep.on("text", async (ctx) => {
   return await ctx.scene.leave();
 });
 getDescriptionStep.use((ctx) =>
-  ctx.replyWithMarkdown(template("income", "description", {}))
+  ctx.replyWithHTML(template("income", "description"))
 );
 
 
@@ -208,10 +202,11 @@ export const incomeWizard = new Scenes.WizardScene(
   async (ctx) => {
     ctx.session.incomeData = {};
     ctx.session.incomeData.telegramId = ctx.from!.id
+    ctx.session.incomeData.type = 'INCOME'
 
-    const text = template("income", "wizardStart", {});
-    await ctx.replyWithMarkdown(text, Markup.removeKeyboard());
-    await ctx.reply(template("income", "sum", {}));
+    const text = template("income", "wizardStart");
+    await ctx.replyWithHTML(text, Markup.removeKeyboard());
+    await ctx.reply(template("income", "sum"));
     return ctx.wizard.next();
   },
   getSumStep,

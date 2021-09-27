@@ -2,31 +2,33 @@ import { MenuTemplate, createBackMainMenuButtons } from 'telegraf-inline-menu'
 
 import { historyCategoriesTemplate } from './historyCategoriesTemplate'
 import { historyDatesTemplate } from './historyDatesTemplate'
-import { hisotryFiletsTemplate } from './historyFiltersTemplate'
-import { hisotryResultTemplate } from './historyResultTemplate'
+import { historyFiltersTemplate } from './historyFiltersTemplate'
+import { historyResultTemplate } from './historyResultTemplate'
  
-import {history as hisotryButtons} from '../constants/inlineButtons.json'
+import {history as historyButtons} from '../constants/inlineButtons.json'
 import { SessionContext } from '../context/context'
+
+import { template } from "../utils/templater";
 
 
 const historyTemplate = new MenuTemplate<SessionContext>(async ctx => {
-  const text = 'История'
-  return { text, parse_mode: 'Markdown' }
+  const text = template("history", "mainMessage")
+  return { text, parse_mode: 'HTML' }
 })
 
 // Active Raffles button
-historyTemplate.submenu(hisotryButtons.categories.title, hisotryButtons.categories.callback, historyCategoriesTemplate)
+historyTemplate.submenu(historyButtons.categories.title, historyButtons.categories.callback, historyCategoriesTemplate)
 
 // My Raffles button
-historyTemplate.submenu(hisotryButtons.dates.title, hisotryButtons.dates.callback, historyDatesTemplate, {
+historyTemplate.submenu(historyButtons.dates.title, historyButtons.dates.callback, historyDatesTemplate, {
   joinLastRow: true
 })
 
-historyTemplate.submenu(hisotryButtons.filters.title, hisotryButtons.filters.callback, hisotryFiletsTemplate, {
+historyTemplate.submenu(historyButtons.filters.title, historyButtons.filters.callback, historyFiltersTemplate, {
   joinLastRow: true
 })
 
-historyTemplate.submenu(hisotryButtons.search.title, hisotryButtons.search.callback, hisotryResultTemplate)
+historyTemplate.submenu(historyButtons.search.title, historyButtons.search.callback, historyResultTemplate)
 
 //historyTemplate.manualRow(createBackMainMenuButtons('↩️', '↩️'))
 

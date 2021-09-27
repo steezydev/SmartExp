@@ -16,7 +16,7 @@ export default async (ctx: any) => {
     })
   }
 
-  return ctx.reply(template('startup', 'greeting', {}),
+  return ctx.reply(template('startup', 'greeting'),
     mainKeyboard
       .resize()
   )
