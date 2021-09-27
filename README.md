@@ -1,12 +1,12 @@
-<h1 align="center">Welcome to Telegram Bot Template 👋</h1>
+<h1 align="center">SmartExp Bot 💸</h1>
 <p>
-  <img alt="Version" src="https://img.shields.io/badge/version-1.0.0-blue.svg?cacheSeconds=2592000" />
+  <img alt="Version" src="https://img.shields.io/badge/version-0.1.0-blue.svg?cacheSeconds=2592000" />
   <a href="#" target="_blank">
     <img alt="License: ISC" src="https://img.shields.io/badge/License-ISC-yellow.svg" />
   </a>
 </p>
 
-> Simple template for telegram bots with TypeScript
+> SmartExp is a Telegram bot which can track your expenses & incomes
 
 ## Install
 
