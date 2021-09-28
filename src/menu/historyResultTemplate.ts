@@ -1,10 +1,10 @@
 import { MenuTemplate, createBackMainMenuButtons } from 'telegraf-inline-menu'
 import { SessionContext } from '../context/context'
 import { getCategoriesList } from '../utils/categoryKeyboard'
+import { recordViewModule } from './modules/recordViewModule'
 import { format } from 'date-fns'
 import processFilter from '../utils/processFilter'
 import currency from '../constants/currency'
-import { confirmDeleteTemplate } from './confirmDeleteTemplate'
 
 import ExpenseModel from "../models/expenseModel"
 
@@ -94,55 +94,18 @@ async function menuBody(context: SessionContext): Promise<string> {
   return text
 }
 
-const historyResultTemplate = new MenuTemplate<SessionContext>(async ctx => {
+export const historyResultTemplate = new MenuTemplate<SessionContext>(async ctx => {
   return { text: await menuBody(ctx), parse_mode: 'HTML' }
 })
 
-//! detailsMenuTemplate START
-
-const detailsMenuTemplate = new MenuTemplate<SessionContext>(async ctx => {
-  // Getting raffle id
-  const id = ctx.match![1].substring(2)
-
-  // Setting current opened raffle id into session
-  ctx.session.currentExpenseId = id
-
-
-  // Getting raffle via API
-  const expense = await ExpenseModel.findOne({ _id: id }).exec()
-
-  let text = `${format(expense!.date, 'dd.MM.yyyy')} ${expense?.category}\n`
-  text += `<b>${expense?.type == 'EXPENSE' ? '-' : '+'}${expense?.sum}</b> ${currency[expense!.currency].sign}\n`
-
-
-  return {
-    text,
-    parse_mode: 'HTML'
-  }
-})
-
-
-
-detailsMenuTemplate.interact('✏️ Изменить', 'edit', {
-	do: async ctx => {
-		await ctx.answerCbQuery('Функция не доступна в данный момент')
-		return '.'
-	}
-})
-
-detailsMenuTemplate.submenu('❌ Удалить', 'delete', confirmDeleteTemplate)
-
-detailsMenuTemplate.manualRow(createBackMainMenuButtons('Назад', ''))
-
-//! detailsMenuTemplate END
-
-historyResultTemplate.chooseIntoSubmenu('details', getAllEntriesButtons, detailsMenuTemplate, {
+// RECORD VIEW
+historyResultTemplate.chooseIntoSubmenu('details', getAllEntriesButtons, recordViewModule, {
   maxRows: 1,
   columns: ENTRIES_PER_PAGE,
   getCurrentPage: context => context.session.currHistoryPage
 })
 
-// Pagination buttons
+// PAGINATION
 async function getCustomPaginationButtons(context: any) {
   const allEntries = await getAllEntries(context)
 
@@ -174,5 +137,3 @@ historyResultTemplate.manualAction(/history_edit:(\d+)$/, (context, path) => {
 })
 
 historyResultTemplate.manualRow(createBackMainMenuButtons('Назад', ''))
-
-export { historyResultTemplate }

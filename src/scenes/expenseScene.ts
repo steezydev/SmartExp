@@ -4,21 +4,16 @@ import { template } from "../utils/templater";
 import { mainKeyboard, dateKeyboard, descriptionKeyboard } from '../constants/keyboards'
 import { createKeyboard } from '../utils/categoryKeyboard'
 import { fancyCount2, isEmojisOnly } from "../utils/checkEmoji";
+import { isNumeric } from '../utils/numbers'
 import currency from '../constants/currency'
 
-import { startOfToday } from 'date-fns'
+import { startOfToday, format } from 'date-fns'
 
 import CategoryModel from "../models/categoryModel"
 import ExpenseModel from "../models/expenseModel"
 import UserModel from "../models/userModel"
 
 const parser = require('any-date-parser');
-
-//TODO: Move to helper
-function isNumeric(a: string) {
-  if (typeof a != "string") return false // we only process strings!  
-  return !isNaN(parseFloat(a)) // ...and ensure strings of whitespace fail
-}
 
 const saveExpense = async (ctx: SessionContext) => {
   const data = ctx.session.expenseData
@@ -38,13 +33,12 @@ const saveExpense = async (ctx: SessionContext) => {
     if (err) throw new Error();
   })
 
-  const date = new Date(data.date);
   await ctx.replyWithHTML(template("expense", "wizardEnd", {
-    sum: ctx.session.expenseData.sum,
+    sum: data.sum,
     currency: currency[user.currency].sign,
-    category: ctx.session.expenseData.category,
-    date: date.getDate() + '.' + (("0" + (date.getMonth() + 1)).slice(-2)) + '.' + date.getFullYear(),
-    description: ctx.session.expenseData.description,
+    category: data.category,
+    date: format(data.date, 'dd.MM.yyyy'),
+    description: data.description,
   }),
     mainKeyboard
       .resize()

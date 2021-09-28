@@ -20,7 +20,7 @@ import statisticsController from "./controllers/statisticsController"
 // Keyboard
 import keyboardButtons from './constants/keyboardButtons.json'
 
-import { historyMenu, resultMenu } from './menu'
+import { historyMenu } from './menu'
 
 const token = process.env.BOT_TOKEN
 if (token === undefined) {
@@ -35,20 +35,22 @@ export const setup = (db: Db) => {
   bot.use(session(db))
   bot.use(stage.middleware())
 
+  //History Menu
   bot.use(historyMenu)
-  bot.use(resultMenu)
 
   //On startup bot greets the users, adds him to the databse (if doesn't exist) and shows an inline keyboard
   bot.start(startupController)
 
-  //Text commands
+  //Main menu
   bot.hears(keyboardButtons.mainMenu.add, addController)
   bot.hears(keyboardButtons.mainMenu.history, historyController)
   bot.hears(keyboardButtons.mainMenu.statistics, statisticsController)
 
+  //Adding expense / income
   bot.hears(keyboardButtons.addMenu.expenses, expenseController)
   bot.hears(keyboardButtons.addMenu.incomes, incomeController)
 
+  //Back button
   bot.hears(keyboardButtons.back, mainController)
 
   return bot;

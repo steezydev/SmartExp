@@ -2,13 +2,8 @@ import { MenuTemplate, createBackMainMenuButtons } from 'telegraf-inline-menu'
 import { SessionContext } from '../context/context'
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfToday, format } from 'date-fns'
 import { template } from "../utils/templater";
+import { dateFilters } from '../constants/filters';
 
-// TODO: Вынести в константы
-const dateFilters = {
-  day: 'Сегодня',
-  week: 'Неделя',
-  month: 'Месяц',
-}
 
 async function menuBody(context: SessionContext): Promise<string> {
   let text: string

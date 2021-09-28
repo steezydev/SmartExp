@@ -1,17 +1,15 @@
 import { MenuTemplate, createBackMainMenuButtons } from 'telegraf-inline-menu'
 import { SessionContext } from '../context/context'
+import { template } from "../utils/templater";
+import { typeFilters } from '../constants/filters';
 
-const filters = {
-  expenses: 'Расходы',
-  incomes: 'Доходы'
-}
 
 export async function getFilters(context: SessionContext) {
   const entries: Record<string, string> = {}
   const selects: Record<string, boolean> = {}
 
   // Generating entries
-  for (const [key, value] of Object.entries(filters)) {
+  for (const [key, value] of Object.entries(typeFilters)) {
     let filter = value
     entries['filter_' + key] = filter
     selects['filter_' + key] = true
@@ -25,7 +23,7 @@ export async function getFilters(context: SessionContext) {
 }
 
 async function menuBody(context: SessionContext): Promise<string> {
-  const text = '🔧 Выберете доступные фильтры'
+  const text = template("history", "type_filter")
 
   return text
 }

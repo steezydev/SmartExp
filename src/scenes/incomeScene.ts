@@ -4,13 +4,14 @@ import { template } from "../utils/templater";
 import { mainKeyboard, dateKeyboard, descriptionKeyboard } from '../constants/keyboards'
 import { createKeyboard } from '../utils/categoryKeyboard'
 import { fancyCount2, isEmojisOnly } from "../utils/checkEmoji";
+import { isNumeric } from '../utils/numbers'
 import currency from '../constants/currency'
 
 import CategoryModel from "../models/categoryModel"
 import ExpenseModel from "../models/expenseModel"
 import UserModel from "../models/userModel"
 
-import { startOfToday } from 'date-fns'
+import { startOfToday, format } from 'date-fns'
 
 const parser = require('any-date-parser');
 
@@ -32,23 +33,16 @@ const saveIncome = async (ctx: SessionContext) => {
     if (err) throw new Error();
   })
 
-  const date = new Date(data.date);
-
   await ctx.replyWithHTML(template("income", "wizardEnd", {
-    sum: ctx.session.incomeData.sum,
+    sum: data.sum,
     currency: currency[user.currency].sign,
-    category: ctx.session.incomeData.category,
-    date: date.getDate() + '.' + (("0" + (date.getMonth() + 1)).slice(-2)) + '.' + date.getFullYear(),
-    description: ctx.session.incomeData.description,
+    category: data.category,
+    date: format(data.date, 'dd.MM.yyyy'),
+    description: data.description,
   }),
     mainKeyboard
       .resize()
   );
-}
-
-function isNumeric(a: string) {
-  if (typeof a != "string") return false // we only process strings!  
-  return !isNaN(parseFloat(a)) // ...and ensure strings of whitespace fail
 }
 
 // Getting sum wizard step

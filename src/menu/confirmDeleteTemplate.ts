@@ -1,9 +1,10 @@
 import { MenuTemplate, createBackMainMenuButtons } from 'telegraf-inline-menu'
 import { SessionContext } from '../context/context'
 import ExpenseModel from "../models/expenseModel"
+import { template } from "../utils/templater";
 
 export const confirmDeleteTemplate = new MenuTemplate<SessionContext>(async ctx => {
-  let text = `❓Вы уверены, что хотите удалить данную запись❓`
+  let text = template('history', 'confirm_delete')
 
   return {
     text,

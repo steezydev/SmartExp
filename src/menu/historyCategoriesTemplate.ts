@@ -1,12 +1,10 @@
 import { MenuTemplate, createBackMainMenuButtons } from 'telegraf-inline-menu'
 import { SessionContext } from '../context/context'
+import { template } from "../utils/templater";
 import CategoryModel from "../models/categoryModel"
 
 export async function getAllCategories(context: SessionContext) {
-  // Getting active raffles list
   const categories = await CategoryModel.find({ userTelegramId: context.from?.id! }).exec()
-
-  console.log(categories)
 
   const entries: Record<string, string> = {}
   const selects: Record<string, boolean> = {}
@@ -17,7 +15,6 @@ export async function getAllCategories(context: SessionContext) {
     entries['id' + category.id] = category.emoji
     selects['id' + category.id] = true
   }
-
 
   if (context.session.categoriesSelected == undefined) {
     if (Object.keys(categories).length != 0) {
@@ -45,7 +42,9 @@ async function setNoneCategories(ctx: SessionContext) {
 }
 
 async function menuBody(context: SessionContext): Promise<string> {
-  const text = '📕 Вы можете выбрать категории, которые будут отображаться в вашей истории'
+  //*There might be some advancements
+
+  const text = template("history", "category_filter")
 
   return text
 }
