@@ -28,8 +28,9 @@
     "mongodb": "^3.7.0",
     "mongoose": "^6.0.6",
     "pupa": "^2.1.1",
-    "telegraf": "^4.3.0",
+    "telegraf": "^4.4.2",
     "telegraf-inline-menu": "^6.2.1",
-    "telegraf-session-mongodb": "^2.0.2"
+    "telegraf-session-mongodb": "^2.0.2",
+    "telegraf-stateless-question": "^2.0.1"
   }
 }

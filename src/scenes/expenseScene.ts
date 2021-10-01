@@ -79,7 +79,7 @@ getCategoryStep.on("text", async (ctx) => {
   const category = ctx.message.text;
 
   if (!isEmojisOnly(category) || fancyCount2(category) > 3) {
-    ctx.reply(template("expense", "category_error"));
+    await ctx.reply(template("expense", "category_error"));
     await ctx.reply(template("expense", "category"));
     return;
   }
@@ -154,7 +154,7 @@ getDateStep.on("text", async (ctx) => {
 
   // Validating date
   if (parsedDate.invalid != undefined) {
-    ctx.reply(template("expense", "date_error"));
+    await ctx.reply(template("expense", "date_error"));
     await ctx.reply(template("expense", "date"));
     return;
   }
@@ -175,7 +175,7 @@ getDescriptionStep.on("text", async (ctx) => {
   let description = ctx.message.text;
 
   if (description.length > 100) {
-    ctx.reply(template("expense", "description_error"));
+    await ctx.reply(template("expense", "description_error"));
     await ctx.reply(template("expense", "description"), descriptionKeyboard.resize());
     return;
   }

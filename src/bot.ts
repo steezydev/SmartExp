@@ -3,8 +3,10 @@ import { SessionContext } from "./context/context"
 
 import { Db } from "mongodb";
 import { session } from "telegraf-session-mongodb"
+
 import { expenseWizard } from './scenes/expenseScene'
 import { incomeWizard } from './scenes/incomeScene'
+import { timeIntervalWizard } from './scenes/timeIntervalScene'
 
 // Controllers
 import startupController from "./controllers/startupController"
@@ -30,7 +32,7 @@ if (token === undefined) {
 const bot = new Telegraf<SessionContext>(token)
 
 export const setup = (db: Db) => {
-  const stage = new Scenes.Stage([incomeWizard, expenseWizard])
+  const stage = new Scenes.Stage([incomeWizard, expenseWizard, timeIntervalWizard])
 
   bot.use(session(db))
   bot.use(stage.middleware())

@@ -1,4 +1,4 @@
-import { MenuTemplate, createBackMainMenuButtons } from 'telegraf-inline-menu'
+import { MenuTemplate, createBackMainMenuButtons, deleteMenuFromContext } from 'telegraf-inline-menu'
 import { SessionContext } from '../context/context'
 import { startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfToday, format } from 'date-fns'
 import { template } from "../utils/templater";
@@ -67,8 +67,9 @@ historyDatesTemplate.select('unique', dateFilters, {
 
 historyDatesTemplate.interact('Свой интервал', 'hist_time_custom', {
   do: async ctx => {
-    await ctx.answerCbQuery('Данная функция сейчас не доступна 😭')
-    return '.'
+    await ctx.scene.enter('timeinterval-wizard')
+    await deleteMenuFromContext(ctx)
+    return false
   }
 })
 
