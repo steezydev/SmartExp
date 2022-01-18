@@ -22,6 +22,8 @@ import statisticsController from "./controllers/statisticsController"
 // Keyboard
 import keyboardButtons from './constants/keyboardButtons.json'
 
+import authMiddleware from './middleware/authMiddleware'
+
 import { historyMenu } from './menu'
 
 const token = process.env.BOT_TOKEN
@@ -36,6 +38,8 @@ export const setup = (db: Db) => {
 
   bot.use(session(db))
   bot.use(stage.middleware())
+
+  bot.use(authMiddleware)
 
   //History Menu
   bot.use(historyMenu)
