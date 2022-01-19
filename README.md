@@ -20,6 +20,38 @@ User can create personalized categories which are visible as emoji. User can ass
 </details>
 
 ## History an filters
+User can filter expense and income records by:
+- Category
+- Date
+- Type (Expenses / Income)
+
+### Category filtering
+User can select several or all categories to perform a search query
+
+<p align="center">
+  <img src="./public/3.gif" alt="Computer man" width="450px">
+</p>
+
+### Date filtering
+User has several options: 
+ - Today
+ - Week
+ - Month
+ - Own interval
+
+With own interval user can define custom interval via sending a message in *DD.MM.YY* format
+
+<p align="center">
+  <img src="./public/4.gif" alt="Computer man" width="450px">
+</p>
+
+### Type filtering
+User can choose between *Expenses / Incomes* or both 
+
+<p align="center">
+  <img src="./public/5.gif" alt="Computer man" width="450px">
+</p>
+
 <details open>
 <summary>Viewing and filtering history</summary>
 <br>
