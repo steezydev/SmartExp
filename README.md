@@ -11,6 +11,9 @@
 User can create personalized categories which are visible as emoji. User can assign category to an expense or income and perform a search based on the category.
 
 ## Income & Expense creation process
+<p align="center">
+  <img src="./public/1.gif" alt="Computer man">
+</p>
 
 
 ## Features
