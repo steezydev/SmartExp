@@ -33,11 +33,12 @@ User can create personalized categories which are visible as emoji. User can ass
 ## Install
 
 ```sh
-npm install
+$ npm install
 ```
+configure `.env` file (*use `.env.example` file*)
 
 ## Run
 
 ```sh
-npm run start
+$ npm run start
 ```
