@@ -11,13 +11,23 @@
 User can create personalized categories which are visible as emoji. User can assign category to an expense or income and perform a search based on the category.
 
 ## Income & Expense creation process
+<details open>
+<summary>Creating an expense</summary>
+<br>
 <p align="center">
-  <img src="./public/1.gif" alt="Computer man">
+  <img src="./public/1.gif" alt="Computer man" width="400px">
 </p>
+</details>
 
+## History an filters
+<details open>
+<summary>Viewing and filtering history</summary>
+<br>
+<p align="center">
+  <img src="./public/2.gif" alt="Computer man" width="400px">
+</p>
+</details>
 
-## Features
-User can watch through, filter and search your expenses and incomes based on category, date and sum
 
 # Getting started
 ## Install
