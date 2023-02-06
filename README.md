@@ -1,12 +1,12 @@
 <img src="./public/cover.png">
 
-![Typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
-![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)
-![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white)
+<p>
+  <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white">
+  <img src="https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white">
+  <img src="https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white">
+</p>
 
-> SmartExp is a telegram bot for tracking your  expenses and incomes right in your chatting app.
-
-# About
+# SmartExp
 ## Categories
 User can create personalized categories which are visible as emoji. User can assign category to an expense or income and perform a search based on the category.
 
@@ -61,15 +61,15 @@ User can choose between *Expenses / Incomes* or both
 </details>
 
 
-# Getting started
-## Install
+## Getting started
+### Install
 
 ```sh
 $ npm install
 ```
 configure `.env` file (*use `.env.example` file*)
 
-## Run
+### Run
 
 ```sh
 $ npm run start
